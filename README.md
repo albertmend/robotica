@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Mobile Robot Simulation Biorobotics UNAM
 
 
@@ -66,3 +67,7 @@ source devel/setup.bash
 ./start.sh
 ```
 
+=======
+# robotica
+Proyecto Final
+>>>>>>> 527a79b1ba306cf8ea66c2adad5cd1d97477469b
