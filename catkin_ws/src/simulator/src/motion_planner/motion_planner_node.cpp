@@ -25,6 +25,8 @@
 #include "clips_ros/SimuladorRepresentation.h"
 #include "../behaviors/oracle.h"
 #include "../action_planner/action_planner.h"
+#include "../action_planner/pf_action_planner.h"
+
 
 
 int main(int argc ,char **argv)
@@ -294,6 +296,12 @@ int main(int argc ,char **argv)
             case 10:
 
 		action_planner(params.robot_x, params.robot_y,params.robot_theta,&movements);
+
+                break;
+
+	    case 11:
+
+		pf_action_planner(params.robot_x, params.robot_y,params.robot_theta,&movements);
 
                 break;
 
