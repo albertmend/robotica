@@ -25,7 +25,7 @@
 #ifndef PI
 #define PI 3.1415926535f
 #endif
-int door[2];
+
 
 // It starts the communication with the CLIPS node
 int pf_start_clips_node_action_planner(){
@@ -33,7 +33,6 @@ int pf_start_clips_node_action_planner(){
  bool init_kdb = false;
  std::string file;
  std::string result;
-
 
  std::cout << "Starting CLIPS" << std::endl;
 
@@ -104,7 +103,7 @@ void pf_get_distance_theta(float x,float y,float angle,float x1,float y1,float *
 
 
 
-void pf_action_planner(float px, float py, float theta, movement *movements,char *world_name,step *steps, int *est_sig){
+void pf_action_planner(float px, float py, float theta, movement *movements){
 
        static int mini_sm=1;
        static char object_name[200];
@@ -152,20 +151,11 @@ void pf_action_planner(float px, float py, float theta, movement *movements,char
        		printf("Room %s zone %s x %f y %f\n",room,zone,x,y);
        		printf("Pose x %f y %f theta %f\n",px,py,theta);
 
-		//pf_get_distance_theta(x,y,theta,px,py,&distance,&angle);
-		//printf("goto angle %f distance %f\n",angle,distance);
+		pf_get_distance_theta(x,y,theta,px,py,&distance,&angle);
+		printf("goto angle %f distance %f\n",angle,distance);
 
-		for(i = 0; i < 200; i++)steps[i].node=-1;
-                    // it finds a path from the origen to a destination using the Dijkstra algorithm
-	         
-		    door[1]=-1;
-		    door[0]=-1;
-                    dijkstra(px,py ,x ,y ,params.world_name,steps,door);
-                    print_algorithm_graph (steps);
-		    *est_sig=101;
-
-		//movements->twist = angle;
-                //movements->advance = distance;
+		movements->twist = angle;
+                movements->advance = distance;
 
 
 		//answer ?sender command goto ?room ?zone ?x ?y ?flg

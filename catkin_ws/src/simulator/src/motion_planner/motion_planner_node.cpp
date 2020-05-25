@@ -12,6 +12,7 @@
 ************************************************/
 
 #include "ros/ros.h"
+#include "math.h"
 #include "../utilities/simulator_structures.h"
 #include "../utilities/random.h"
 #include "motion_planner_utilities.h"
@@ -63,6 +64,10 @@ int main(int argc ,char **argv)
     float max_turn_angle;
     float noise_advance;
     float noise_angle;
+    float angle;
+    int door[2];
+    int meta_x;
+    int meta_y;
     
     char path[100];
     char object_name[20];
@@ -230,7 +235,9 @@ int main(int argc ,char **argv)
                 {
                     for(i = 0; i < 200; i++)steps[i].node=-1;
                     // it finds a path from the origen to a destination using the Dijkstra algorithm
-                    dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.world_name,steps);
+                    door[1]=-1;
+		    door[0]=-1;
+dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.world_name,steps,door);
                     print_algorithm_graph (steps);
                     i=0;
                     final_x=params.light_x;
@@ -300,8 +307,79 @@ int main(int argc ,char **argv)
                 break;
 
 	    case 11:
+		if(flagOnce)
+                {
+                    est_sig = 100;
+                    flagOnce = 0;
+                }
+		if(est_sig==100){
+		pf_action_planner(params.robot_x,params.robot_y,params.robot_theta,&movements,params.world_name,steps,&est_sig);
+		}
+		else if(est_sig==101){
+		    i=0;
+		    set_light_position(steps[i].x,steps[i].y);
+		    printf("New Light %d: x = %f  y = %f \n",i,steps[i].x,steps[i].y);
+                    flg_finish=0;
+                    est_sig = 0;
+                    movements.twist=0.0;
+                    movements.advance =0.0;
+                }
+		else if (est_sig==20){
+		movements.twist=0.0;
+                movements.advance =max_advance;
+		if (sqrt(pow(steps[i].y-params.robot_y,2)+pow(steps[i].x-params.robot_x,2))<max_advance){
+		est_sig=0;}
+		else if (q_inputs>0){
+			int k=0;
+			while(steps[k].node!=-1){
+			k++;
+			}
+			door[1]=steps[i].node;
+		    	door[0]=steps[i-1].node;
+			meta_x=steps[k].x;
+			meta_y=steps[k].y;
+                	dijkstra(params.robot_x,params.robot_y ,meta_x ,meta_y ,params.world_name,steps,door);
+			print_algorithm_graph (steps);
+			i=0;
+			set_light_position(steps[i].x,steps[i].y);
+                        printf("New Light %d: x = %f  y = %f \n",i,steps[i].x,steps[i].y);
+			est_sig=0;
+		}
+		}
+                else
+                {
+                    flg_result=sm_avoidance_destination(intensity,q_light,q_inputs,&movements,&est_sig,
+                                                        params.robot_max_advance ,params.robot_turn_angle);
+                    if(flg_result == 1)
+                    {
+                        if(flg_finish == 1) est_sig=100;//regresa a action_planer
+                        else
+                        {
+                            if(steps[i].node != -1)
+                            {
+				if((steps[i-1].node==6 && steps[i].node==10) ||(steps[i-1].node==10 && steps[i].node==6)){
+				angle=atan2(steps[i].y-steps[i-1].y,steps[i].x-steps[i-1].x);
 
-		pf_action_planner(params.robot_x, params.robot_y,params.robot_theta,&movements);
+				movements.twist=angle-params.robot_theta;
+                    		movements.advance =0.0;
+				est_sig=20;
+
+			}
+
+                                set_light_position(steps[i].x,steps[i].y);
+                                printf("New Light %d: x = %f  y = %f \n",i,steps[i].x,steps[i].y);
+                                printf("Node %d\n",steps[i].node);
+                                i++;
+                                //printf("type a number \n");
+                                //scanf("%d",&tmp);
+                            }
+                            else
+                            {
+                                flg_finish=1;
+                            }
+                        }
+                    }
+                }
 
                 break;
 

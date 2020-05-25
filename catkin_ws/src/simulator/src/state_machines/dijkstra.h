@@ -26,7 +26,7 @@ nodo nodes[MUM_NODES];
 int num_nodes = 0;
 
 // it reads the file that conteins the environment description
-int read_nodes(char *file)
+int read_nodes(char *file, int *door)
 {
    FILE *fp;
    char data[ 100 ];
@@ -68,17 +68,18 @@ int read_nodes(char *file)
       }
       else if((strcmp("connection", data ) == 0) && ( flg == 0 ) )
       {
-         if(  0 < fscanf(fp, "%s", data));
+         if(  0 < fscanf(fp, "%s", data) );
          node_index = atoi(data);
          
          if(  0 < fscanf(fp, "%s", data));
          node_connection = atoi(data);
-
+	if (node_index!=door[0] && node_connection!=door[1]){
          nodes[node_index].conections[nodes[node_index].num_conections].node = node_connection;
 
          if(  0 < fscanf(fp, "%s", data));
          nodes[node_index].conections[nodes[node_index].num_conections].cost = atof(data);
          nodes[node_index].num_conections++;
+	}
       }
    }
    fclose(fp);
@@ -155,7 +156,7 @@ void printNode(int i) // use it for debug
          printf(     "%d  %f \n",nodes[i].conections[j].node,nodes[i].conections[j].cost );
 }
 
-int dijkstra(float rx ,float ry ,float lx ,float ly, char *world_name,step *steps )
+int dijkstra(float rx ,float ry ,float lx ,float ly, char *world_name,step *steps, int *door )
 {
    char archivo[150];
    int i;
@@ -177,8 +178,9 @@ int dijkstra(float rx ,float ry ,float lx ,float ly, char *world_name,step *step
       nodes[i].parent = -1;
       nodes[i].acumulado = 0;
    }
+
  
-   num_nodes=read_nodes(archivo); // Se lee el arcivo .top
+   num_nodes=read_nodes(archivo, door); // Se lee el arcivo .top
 
 
    for(i = 1; i < num_nodes; i++)

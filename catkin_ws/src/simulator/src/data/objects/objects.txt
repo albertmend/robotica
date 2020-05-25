@@ -1,6 +1,6 @@
-Apple .2 .05
-Sushi .2 .05
-Milk .2 .05
-Soap .3 .05
-Perfume .3 .05
-Shampoo .3 .05
+Apple .2 1.05
+Sushi .2 1.05
+Milk .2 1.05
+Soap .3 1.05
+Perfume .3 1.05
+Shampoo .3 1.05

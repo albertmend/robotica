@@ -67,7 +67,63 @@ void dfs_algorithm(int D ,int L)
 }
 
 
+int read_nodes(char *file)
+{
+   FILE *fp;
+   char data[ 100 ];
+   int i=0;
+   int flg = 0;
+   float tmp;
+   float dimensions_room_x,dimensions_room_y;
+   int node_index,node_connection,cost;
 
+   fp = fopen(file,"r"); 
+    
+   if( fp == NULL )
+   {
+      sprintf(data, "File %s does not exists\n", file);
+      printf("File %s does not exists\n", file);
+      return(0);
+   }
+
+   while( fscanf(fp, "%s" ,data) != EOF)
+   {
+      if( strcmp(";(", data ) == 0 )
+      {
+         flg = 1;
+         while(flg)
+         {
+            if(  0 < fscanf(fp, "%s", data));
+            sscanf(data, "%f", &tmp);
+            if(strcmp(")", data) == 0) flg = 0;
+         }
+      }
+      else if((strcmp("node", data ) == 0) && ( flg == 0 ) )
+      {
+         if(  0 < fscanf(fp, "%s", data));
+         nodes[i].num_node = atoi(data);
+         if(  0 < fscanf(fp, "%s", data));
+         nodes[i].x = atof(data);
+         if(  0 < fscanf(fp, "%s", data));
+         nodes[i++].y = atof(data);
+      }
+      else if((strcmp("connection", data ) == 0) && ( flg == 0 ) )
+      {
+         if(  0 < fscanf(fp, "%s", data) );
+         node_index = atoi(data);
+         
+         if(  0 < fscanf(fp, "%s", data));
+         node_connection = atoi(data);
+         nodes[node_index].conections[nodes[node_index].num_conections].node = node_connection;
+
+         if(  0 < fscanf(fp, "%s", data));
+         nodes[node_index].conections[nodes[node_index].num_conections].cost = atof(data);
+         nodes[node_index].num_conections++;
+      }
+   }
+   fclose(fp);
+   return i;
+}
 
 int dfs(float rx ,float ry ,float lx ,float ly, char *world_name,step *steps )
 {
@@ -84,7 +140,6 @@ int dfs(float rx ,float ry ,float lx ,float ly, char *world_name,step *steps )
    strcat(archivo,"/");
    strcat(archivo,world_name);
    strcat(archivo,".top");
-
 
    for(int i=0; i<200; i++)
    {
