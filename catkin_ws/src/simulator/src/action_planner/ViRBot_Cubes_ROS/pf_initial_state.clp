@@ -29,8 +29,8 @@
 
 ; Rooms definitions
 	( Room (name deposit)(zone deposit)(zones frontentrance)(center 0.75 1.6))
-	( Room (name kitchen)(zone kitchen)(zones frontentrance fridge)(center 1.65 1.6))
-	( Room (name corridor)(zone corridor)(zones dummy1 depositentrance kitchenentrance studioentrance bedroomentrance serviceentrance reception)(center 1.0 1.05))
+	( Room (name kitchen)(zone kitchen)(zones frontentrance fridge)(center 1.65 1.6)) 
+	( Room (name corridor)(zone corridor)(zones dummy1 depositentrance kitchenentrance studioentrance bedroomentrance serviceentrance reception)(center 0.6 1.05))
 	( Room (name studio)(zone studio)(zones frontentrance)(center 0.4 0.45))
 	( Room (name bedroom)(zone bedroom)(zones frontentrance)(center 1.05 0.45))
 	( Room (name service)(zone service)(zones frontentrance)(center 1.65 0.45))
@@ -55,9 +55,9 @@
         (real-stack corridor corridor Soap Perfume Shampoo)
 
 
-	(goal-stack 1 kitchen kitchen Apple Sushi Milk)
 	(goal-stack 2 service service Soap Perfume Shampoo)
-
+	(goal-stack 1 kitchen kitchen Apple Sushi Milk)
+	
         (plan (name cubes) (number 0)(duration 0))
 
 )

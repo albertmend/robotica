@@ -20,7 +20,6 @@
 #include "../state_machines/sm_avoidance.h"
 #include "../state_machines/sm_avoidance_destination.h"
 #include "../state_machines/sm_destination.h"
-#include "../state_machines/campos_potenciales_sm.h"
 #include "../state_machines/user_sm.h"
 #include "../state_machines/dijkstra.h"
 #include "../state_machines/dfs.h"
@@ -70,31 +69,6 @@ int main(int argc ,char **argv)
     float meta_x;
     float meta_y;
     
-/****/
-  float menor_x;
-    float menor_y;
-    float m_x=0;
-    float m_y=0;
-    float x_inicial=0;
-    float y_inicial=0;
-    float x_ini=0;
-    float y_ini=0;
-    int contador=0;
-    int cont=0;
-    int contador1=0;
-    int cont1=0;
-    float mm=0;
-    float m=0;
-    float mb=0;
-    float b=0;    
-    int pasos = 0;
-    int stepss = 0;
-
-    float d0[50];
-    float d_0[50];
-
-/****/
-
     char path[100];
     char object_name[20];
 
@@ -335,18 +309,18 @@ dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.
 	    case 11:
 		if(flagOnce)
                 {
-                    est_sig = 3000;
+                    est_sig = 100;
                     flagOnce = 0;
                 }
-		if(est_sig==3000){
+		if(est_sig==100){
 			//Primero se crea el plan para cada goto, se llama a dijkstra y obtenemos steps
-			printf("\nestado: 3000\n");
+			printf("\nestado: 100\n");
 			pf_action_planner(params.robot_x,params.robot_y,params.robot_theta,&movements,params.world_name,steps,&est_sig);
 			printf("\nEl action planer ha devuelto el plan\n");
 		}
-		else if(est_sig==3001){
+		else if(est_sig==101){
 		    //los steps obtenidos de dijkstra se convierten en el light position uno por uno
-		    printf("\nestado: 3001\n");
+		    printf("\nestado: 101\n");
 		    i=0;
 		    set_light_position(steps[i].x,steps[i].y);
 		    printf("New Light %d: x = %f  y = %f \n",i,steps[i].x,steps[i].y);
@@ -355,10 +329,10 @@ dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.
                     movements.twist=0.0;
                     movements.advance =0.0;
                 }
-		else if (est_sig==3020){
-			printf("\nestado: 3020\n");
+		else if (est_sig==20){
+			printf("\nestado: 20\n");
 		    	movements.twist=0.0;
-                	movements.advance =max_advance*0.2;
+                	movements.advance =max_advance;
 			printf("\nsteps[%d].x: %f,steps[%d].y: %f,params.robot_x:%f,params.robot_y:%f\n",i,steps[i-1].x,i,steps[i-1].y,params.robot_x,params.robot_y);
 			printf("\ndistancia a la luz: %f, max_advance: %f\n",sqrt(pow(steps[i-1].y-params.robot_y,2)+pow(steps[i-1].x-params.robot_x,2)),max_advance);
 			printf("\nq_inputs: %d\n",q_inputs);
@@ -400,36 +374,11 @@ dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.
                 {
 			//se manda a llamar el algoritmo de evasión de obstáculos
 			printf("\nLlamando al algoritmo de evasión de obstáculos\n");
-                    //flg_result=sm_avoidance_destination(intensity,q_light,q_inputs,&movements,&est_sig,
-                    //                                  params.robot_max_advance ,params.robot_turn_angle);
-
-/*********************/
-			flg_result=campos_potenciales_sm(intensity,light_readings, lidar_readings, params.laser_num_sensors,params.laser_value, q_light, q_inputs, &movements,&est_sig ,params.robot_max_advance ,params.robot_turn_angle,params.robot_x ,params.robot_y,params.light_x,params.light_y,d0,d_0,&mm,&mb, m, b,&contador1,cont1, &pasos, stepss,&menor_x,&menor_y, m_x, m_y,&x_ini,&y_ini, x_inicial, y_inicial, &contador,cont);
-			m_x=menor_x;
-			m_y=menor_y;
-			x_inicial=x_ini;
-			y_inicial=y_ini;
-			cont=contador;
-			for(int i=0;i<50;i++){
-				d_0[i]=d0[i];
-			}	
-			
-			m=mm;
-			b=mb;
-			cont1=contador1;
-			stepss = pasos;
-/*********************/
-
-                    if(flg_result == 1) // Si llegó a la fuente luminosa
+                    flg_result=sm_avoidance_destination(intensity,q_light,q_inputs,&movements,&est_sig,
+                                                        params.robot_max_advance ,params.robot_turn_angle);
+                    if(flg_result == 1) // Si no ha llegado al destino
                     {
-			/*INSERTED*/
-			
-			cont1=0; contador1=0; cont=0;contador=0;
-			/*INSERTED*/
-                        if(flg_finish == 1) {
-				//stop();
-				est_sig=3000;	//regresa a action_planer
-			}
+                        if(flg_finish == 1) est_sig=100;//regresa a action_planer
                         else
                         {
                             if(steps[i].node != -1)
@@ -448,7 +397,7 @@ dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.
 					angle=atan2(steps[i].y-steps[i-1].y,steps[i].x-steps[i-1].x);
 					movements.twist=angle-params.robot_theta;
                     			movements.advance =0.0;
-					est_sig=3020;
+					est_sig=20;
 
 			        }
 
@@ -462,7 +411,6 @@ dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.
                             else
                             {
                                 flg_finish=1;
-				
                             }
                         }
                     }
@@ -471,34 +419,7 @@ dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.
                 break;
 
 
-	     case 12:
-			if(flagOnce)
-                {
-                    est_sig = 0;
-                    flagOnce = 0;
-                }
-                flg_result=campos_potenciales_sm(intensity,light_readings, lidar_readings, params.laser_num_sensors,params.laser_value, q_light, q_inputs, &movements,&est_sig ,params.robot_max_advance ,params.robot_turn_angle,params.robot_x ,params.robot_y,params.light_x,params.light_y,d0,d_0,&mm,&mb, m, b,&contador1,cont1, &pasos, stepss,&menor_x,&menor_y, m_x, m_y,&x_ini,&y_ini, x_inicial, y_inicial, &contador,cont);
-		
-		//d_1=d1;
-		//d_2=d2;
-		//d_3=d3;
-		//d_4=d4;
-		//d_5=d5;
-		m_x=menor_x;
-		m_y=menor_y;
-		x_inicial=x_ini;
-		y_inicial=y_ini;
-		cont=contador;
-		for(int i=0;i<20;i++){
-			d_0[i]=d0[i];
-		}	
-		
-		m=mm;
-		b=mb;
-		cont1=contador1;
-		stepss = pasos;
-		if(flg_result == 1) {stop(); cont1=0; contador1=0; cont=0;contador=0;}
-			break;
+
              default:
                     printf(" ******* SELECTION NO DEFINED *******\n");
                     movements.twist = 3.1416/4;

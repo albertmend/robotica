@@ -103,7 +103,6 @@ void pf_get_distance_theta(float x,float y,float angle,float x1,float y1,float *
 }
 
 
-
 void pf_action_planner(float px, float py, float theta, movement *movements,char *world_name,step *steps, int *est_sig){
 
        static int mini_sm=1;
@@ -162,7 +161,11 @@ void pf_action_planner(float px, float py, float theta, movement *movements,char
 		    door[0]=-1;
                     dijkstra(px,py ,x ,y ,params.world_name,steps,door);
                     print_algorithm_graph (steps);
-		    *est_sig=101;
+		    
+   	   	    for(int i=0;i<20;i++){
+			printf("\nsteps[%d].node=%d\n",i,steps[i].node);
+  		    }
+		    *est_sig=3001;
 
 		//movements->twist = angle;
                 //movements->advance = distance;

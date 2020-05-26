@@ -49,18 +49,18 @@ float f_total_theta = 0;
 float f_repulsiva_total_r = 0;
 float f_repulsiva_total_theta = 0;
 
-int n = 20;
+int n = 50; //20
 for (int i=0;i<n-1;i++){
 	darray[i]=d_array[i+1];	
 }
 darray[n-1]=sqrt((light_x-robot_x)*(light_x-robot_x)+(light_y-robot_y)*(light_y-robot_y));
 
-printf("\ndarray: [%f",darray[0]);
+/*printf("\ndarray: [%f",darray[0]);
 for(int i=1;i<n-1;i++){
 	printf(",%f",darray[i]);
 }
 printf("]\n");
-				
+*/				
 
 
 
@@ -72,11 +72,11 @@ printf("]\n");
 
 
         case 0:	
-		if ((darray[n-1]-darray[0])*(darray[n-1]-darray[0])<0.01*0.01){
-			printf("\nSTUCK\n");
-			*movements = generate_output(STOP,Mag_Advance,0.6*max_twist);
-			*next_state=100; //100 para Bug 2 y 200 para Bug 1
-		}else{
+		//if ((darray[n-1]-darray[0])*(darray[n-1]-darray[0])<0.01*0.01){
+		//	printf("\nSTUCK\n");
+		//	*movements = generate_output(STOP,Mag_Advance,0.6*max_twist);
+		//	*next_state=100; //100 para Bug 2 y 200 para Bug 1
+		//}else{
 		/*Encontramos la dirección de la luz*/		
 /*
 			    1	  0   	7
@@ -86,8 +86,8 @@ printf("]\n");
 		if(intensity > THRESHOLD_FOLLOWER){
 			// hemos llegado 
 			printf("Llegamos a la fuente luminosa\n");
-			*movements = generate_output(STOP,Mag_Advance,0.6*max_twist);
-			*next_state = 99;
+			*movements=generate_output(STOP,Mag_Advance,0.6*max_twist);
+	               				return 1;
 		
 		}else{
 			for (int i=1;i<8;i++)		 	
@@ -108,7 +108,7 @@ printf("]\n");
 			suma = 0;					
 			for(int i=0;i<size;i++){
 				suma += observations[i];
-				printf("\nobservations[%i] = %f",i,observations[i]);				
+				//printf("\nobservations[%i] = %f",i,observations[i]);				
 			}
 			    
 			printf("\n\t\t\tsuma: %f, size*laser_value=%f\n",suma,size*laser_value);
@@ -196,7 +196,7 @@ printf("]\n");
 					*movements = generate_output(LEFT,Mag_Advance*f_total_r*0.3,f_total_theta*0.5);
 					printf("\nRIGHT");			
 				}else{
-					*movements = generate_output(LEFT,Mag_Advance,f_total_theta);
+					*movements = generate_output(LEFT,Mag_Advance*f_total_r*0.3,f_total_theta); //MagAdvance
 					printf("\nBACKWARD---------------------------------------------------------");
 				}
 				
@@ -206,12 +206,12 @@ printf("]\n");
 			
 			
 			}
-		}
+		//}
 			
 			break;	
 	case 1:	 
 				
-		*movements = generate_output(FORWARD,Mag_Advance,0);
+		*movements = generate_output(FORWARD,Mag_Advance,0); //
 		*next_state = 0;
 		break;
 /***************** RECUPERACIÓN CON BUG 2 **************/
@@ -227,8 +227,8 @@ printf("]\n");
 				*movements = generate_output(STOP,Mag_Advance,max_twist);		
 				*next_state = 101;
 			}else{
-				*movements = generate_output(STOP,Mag_Advance,max_twist);
-				*next_state = 99;
+				*movements=generate_output(STOP,Mag_Advance,0.6*max_twist);
+	               				return 1;
 			}	
 			break;
 	case 101:	
@@ -240,8 +240,8 @@ printf("]\n");
 			if(intensity > THRESHOLD_FOLLOWER){
 				// hemos llegado 
 				printf("Llegamos a la fuente luminosa\n");
-				*movements = generate_output(STOP,Mag_Advance,0.6*max_twist);
-				*next_state = 99;
+				*movements=generate_output(STOP,Mag_Advance,0.6*max_twist);
+	               				return 1;
 		
 			}else{
 				for (int i=1;i<8;i++)		 	
@@ -345,8 +345,8 @@ printf("]\n");
 				if(intensity > THRESHOLD_FOLLOWER){
 					// hemos llegado 
 					printf("Llegamos a la fuente luminosa\n");
-					*movements = generate_output(STOP,Mag_Advance,0.6*max_twist);
-					*next_state = 99;
+					*movements=generate_output(STOP,Mag_Advance,0.6*max_twist);
+	               				return 1;
 				}else{
 					//Avanzamos hacia el frente, a menos que esté obstruido el 75% de la izquierda
 					// No hemos llegado a la fuente luminosa
@@ -413,8 +413,8 @@ printf("]\n");
 			if(intensity > THRESHOLD_FOLLOWER){
 				// hemos llegado 
 				printf("Llegamos a la fuente luminosa\n");
-				*movements = generate_output(STOP,Mag_Advance,0.6*max_twist);
-				*next_state = 99;
+				*movements=generate_output(STOP,Mag_Advance,0.6*max_twist);
+	               				return 1;
 		
 			}else{
 				for (int i=1;i<8;i++)		 	
@@ -510,8 +510,8 @@ printf("]\n");
 				if(intensity > THRESHOLD_FOLLOWER){
 					// hemos llegado 
 					printf("Llegamos a la fuente luminosa\n");
-					*movements = generate_output(STOP,Mag_Advance,0.6*max_twist);
-					*next_state = 99;
+					*movements=generate_output(STOP,Mag_Advance,0.6*max_twist);
+	               				return 1;
 				}else{
 					//Avanzamos hacia el frente, a menos que esté obstruido el 75% de la izquierda
 					// No hemos llegado a la fuente luminosa
@@ -586,8 +586,8 @@ printf("]\n");
 					if(intensity > THRESHOLD_FOLLOWER){
 						// hemos llegado 
 						printf("Llegamos a la fuente luminosa\n");
-						*movements = generate_output(STOP,Mag_Advance,0.6*max_twist);
-						*next_state = 99;
+						*movements=generate_output(STOP,Mag_Advance,0.6*max_twist);
+	               				return 1;
 					}else{
 						//Avanzamos hacia el frente, a menos que esté obstruido el 75% de la izquierda
 						// No hemos llegado a la fuente luminosa

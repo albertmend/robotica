@@ -1465,9 +1465,9 @@ class MobileRobotSimulator(threading.Thread):
 		self.entryLightX = Label(self.rightMenu ,text = "Click Right" ,background = self.backgroundColor ,font = self.lineFont ,justify='center')
 		self.entryLightY = Label(self.rightMenu ,text = "Click Right" ,background = self.backgroundColor ,font = self.lineFont ,justify='center')
 		self.entryStepsExcec = Label(self.rightMenu ,text = "0" ,background = self.backgroundColor ,font = self.lineFont ,justify='center')
-		self.entryFile.insert ( 0, 'random_2' )
-		self.entrySteps.insert( 0, '100' )
-		self.entryBehavior.insert ( 0, '4' )
+		self.entryFile.insert ( 0, 'final_doors' )
+		self.entrySteps.insert( 0, '10000' )
+		self.entryBehavior.insert ( 0, '11' )
 
 		self.buttonMapLess = Button(self.rightMenu ,width = 5, foreground = self.buttonFontColor, background = self.buttonColor , font = self.buttonFont ,text = "Zoom Out" ,command = self.mapLess)
 		self.buttonMapMore = Button(self.rightMenu ,width = 5, foreground = self.buttonFontColor, background = self.buttonColor , font = self.buttonFont, text = "Zoom In " ,command = self.mapMore)
@@ -1522,7 +1522,7 @@ class MobileRobotSimulator(threading.Thread):
 		self.entryTurnAngle .insert ( 0, '0.7857' )
 
 		self.labelVelocity = Label(self.rightMenu ,text = "Execution velocity:"        ,background = self.backgroundColor ,font = self.lineFont)
-		self.sliderVelocity =Scale(self.rightMenu, from_=1, to=3, orient=HORIZONTAL ,length=200 ,background = self.backgroundColor ,font = self.lineFont)
+		self.sliderVelocity =Scale(self.rightMenu, from_=1, to=100, orient=HORIZONTAL ,length=200 ,background = self.backgroundColor ,font = self.lineFont)
 		
 
 		# Sensors
