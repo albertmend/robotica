@@ -8,7 +8,7 @@
  *		01-04-2020                              *
  *                                                      *
  ********************************************************/
-#define THRESHOLD_FOLLOWER 30
+#define THRESHOLD_FOLLOWER 60
 #define PI 3.1416
 
 // State Machine 

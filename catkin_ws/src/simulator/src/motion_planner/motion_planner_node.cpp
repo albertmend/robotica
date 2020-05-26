@@ -442,7 +442,9 @@ dijkstra(params.robot_x ,params.robot_y ,params.light_x ,params.light_y ,params.
 ((steps[i-1].node==14 && steps[i].node==20)  || (steps[i-1].node==20 && steps[i].node==14)) ||
 ((steps[i-1].node==12 && steps[i].node==7 )  || (steps[i-1].node==7  && steps[i].node==12)) ||
 ((steps[i-1].node==7  && steps[i].node==8 )  || (steps[i-1].node==8  && steps[i].node==7 )) ||
-((steps[i-1].node==11 && steps[i].node==23)  || (steps[i-1].node==23 && steps[i].node==11))
+((steps[i-1].node==11 && steps[i].node==23)  || (steps[i-1].node==23 && steps[i].node==11)) ||
+((steps[i-1].node==17 && steps[i].node==16)  || (steps[i-1].node==16 && steps[i].node==17)) ||
+((steps[i-1].node==16 && steps[i].node==21)  || (steps[i-1].node==21 && steps[i].node==16))
 
 ){
 					angle=atan2(steps[i].y-steps[i-1].y,steps[i].x-steps[i-1].x);
