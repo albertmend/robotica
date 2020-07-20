@@ -24,15 +24,18 @@
 	( item (type Objects) (name Soap)(room corridor)(zone corridor)(image Soap)(attributes pick)(pose 0.3 1.05 1.0))
 	( item (type Objects) (name Perfume)(room corridor)(zone corridor)(image Perfume)(attributes pick)(pose 0.3 1.05 0.5))
 	( item (type Objects) (name Shampoo)(room corridor)(zone corridor)(image Shampoo)(attributes pick)(pose 0.3 1.05 0.0))
-
+	;punto 5
+	( item (type Objects) (name Book)(room studio)(zone studio)(image Book)(attributes pick)(pose 0.2 0.7 0.5))
+	( item (type Objects) (name Hammer)(room deposit)(zone deposit)(image Hammer)(attributes pick)(pose 0.8 1.8 0.5))
+	
 	( item (type Objects) (name freespace)(room any)(zone any)(image none)(attributes none)(pose 0.0 0.0 0.0))
 
 ; Rooms definitions
 	( Room (name deposit)(zone deposit)(zones frontentrance)(center 0.75 1.6))
 	( Room (name kitchen)(zone kitchen)(zones frontentrance fridge)(center 1.5 1.4));1.65 1.6 
 	( Room (name corridor)(zone corridor)(zones dummy1 depositentrance kitchenentrance studioentrance bedroomentrance serviceentrance reception)(center 0.6 1.05))
-	( Room (name studio)(zone studio)(zones frontentrance)(center 0.4 0.45))
-	( Room (name bedroom)(zone bedroom)(zones frontentrance)(center 1.05 0.45))
+	( Room (name studio)(zone studio)(zones frontentrance)(center 0.3 0.4))
+	( Room (name bedroom)(zone bedroom)(zones frontentrance)(center 1.0 0.6))
 	( Room (name service)(zone service)(zones frontentrance)(center 1.65 0.45))
 	
 
@@ -50,13 +53,19 @@
 ;stacks definitions
         (stack corridor corridor Apple Sushi Milk)
         (stack corridor corridor Soap Perfume Shampoo)
+	(stack service service Book)
+	(stack bedroom bedroom Hammer)
 
         (real-stack corridor corridor Apple Sushi Milk)
         (real-stack corridor corridor Soap Perfume Shampoo)
-
-
-	(goal-stack 2 service service Soap Perfume Shampoo)
-	(goal-stack 1 kitchen kitchen Apple Sushi Milk)
+	(real-stack studio studio Book)
+	(real-stack deposit deposit Hammer)
+	
+	(goal-stack 4 service service Soap Perfume Shampoo)
+	(goal-stack 3 kitchen kitchen Apple Sushi Milk)
+	(goal-stack 2 studio studio Hammer)
+	(goal-stack 1 bedroom bedroom Book)
+	
 	
         (plan (name cubes) (number 0)(duration 0))
 

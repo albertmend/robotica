@@ -20,6 +20,7 @@
         (retract ?f)
         (printout t "ROS Starting action planner ROS")
 	(assert (action-planner active))
+	(assert (objective 1));para que lo resuelva en orden
 )
 
 
@@ -38,6 +39,8 @@
 (defrule move-directly-stack
 	(action-planner active)
         ?stack-1 <- (stack ?room1 ?zone1 ?block1 $?rest1)
+	?real-stack-1 <- (real-stack ?room1 ?zone1 ?block1 $?rest1)
+	(objective ?num2)
         ?goal <- (goal-stack ?num2 ?room ?zone $?rest-goal ?block1)
 	(not (final-stack ?num2 ?room ?zone $?rest ?block1))
 	(plan (name ?name) (number ?num))
@@ -45,8 +48,9 @@
 	?f1 <- (item (type Objects) (name ?block1))
 	;?f1 <- (item (type Objects) (name ?block1)(room ?room1)(zone ?zone1))
         =>
-        (retract ?stack-1)
+        (retract ?stack-1 ?real-stack-1)
         (assert (stack ?room1 ?zone1 $?rest1))
+	(assert (real-stack ?room1 ?zone1 $?rest1))
         (assert (final-stack ?num2 ?room ?zone ?block1))
         (printout t ?block1 " will be moved onto free space in room " ?room crlf)
 
@@ -67,14 +71,17 @@
 (defrule move-directly
 	(action-planner active)
         ?goal <- (goal (room ?room)(zone ?zone)(move ?block1) (on ?block2&:(neq ?block2 freespace)))
+	(objective ?num2)
 	?f <- (final-stack ?num2 ?room ?zone ?block2 $?rest2)
         ?stack-1 <- (stack ?room1 ?zone1 ?block1 $?rest1)
+	?real-stack-1 <- (real-stack ?room1 ?zone1 ?block1 $?rest1)
         (plan (name ?name) (number ?num))
         (not (plan (name ?name) (number ?num1&:( > ?num1 ?num))))
 	;?f1 <- (item (type Objects) (name ?block1)(room ?room1)(zone ?zone1))
         =>
-        (retract ?goal ?stack-1 ?f)
+        (retract ?goal ?stack-1 ?f ?real-stack-1)
         (assert (stack ?room1 ?zone1 $?rest1))
+	(assert (real-stack ?room1 ?zone1 $?rest1))
         (assert (final-stack ?num2 ?room ?zone ?block1 ?block2 $?rest2))
         (printout t ?block1 " will be moved in front of " ?block2 "." crlf)
 
@@ -102,6 +109,7 @@
         =>
         (retract ?goal)
         (assert (stack ?room1 ?zone1 ?block1))
+	(assert (real-stack ?room1 ?zone1 ?block1))
         (printout t ?block1 " will be moved onto free space in room " ?room1 crlf)
         (assert (plan (name ?name) (number (+ 1 ?num))(actions goto ?room1 ?zone1)(duration ?*plan_time*)) )
         (assert (plan (name ?name) (number (+ 2 ?num))(actions find-object ?block1)(duration ?*plan_time*)) )
@@ -118,23 +126,31 @@
 
 (defrule clear-upper-block
 	(action-planner active)
+	(objective ?num)
         (goal-stack ?num ?room ?zone $? ?block1 ?block2 $?)
         ?f <- (stack ?r ?z ?top $?rest1 ?block1 $?rest2)
+	?f2 <- (real-stack ?r ?z ?top $?rest1 ?block1 $?rest2)
         =>
 	(retract ?f)
+	(retract ?f2)
         (assert (goal (move ?top)(room ?r)(zone ?z)(on freespace)))
 	(assert (stack ?r ?z $?rest1 ?block1 $?rest2))
+	(assert (real-stack ?r ?z $?rest1 ?block1 $?rest2))
 )
 
 
 (defrule clear-lower-block
 	(action-planner active)
+	(objective ?num)
         (goal-stack ?num ?room ?zone $? ?block1 ?block2 $?)
         ?f <- (stack ?r ?z ?top  $?rest1 ?block2 $?rest2)
+	?f2 <- (real-stack ?r ?z ?top  $?rest1 ?block2 $?rest2)
         =>
 	(retract ?f)
+	(retract ?f2)
         (assert (goal (move ?top)(room ?r)(zone ?z)(on freespace)))
 	(assert (stack ?r ?z $?rest1 ?block2 $?rest2))
+	(assert (real-stack ?r ?z $?rest1 ?block2 $?rest2))
 )
 
 
@@ -160,4 +176,27 @@
 	(modify ?f1 (room ?deposit) (zone ?zone))
 )
 
+
+(defrule find-stack
+	?f1 <- (stack ?room ?zone ?obj $?rest)
+	(not (real-stack ?room ?zone ?obj $?rest))
+	?f2 <- (Room (name ?room))
+	?f3 <- (Room (name ?new-room)(status nil))
+	(plan (name ?name) (number ?num))
+	(not (plan (name ?name) (number ?num1&:( > ?num1 ?num))))
+ 	=>
+	(modify ?f2 (status explored))
+	(retract ?f1)
+	(assert (stack ?new-room ?new-room ?obj $?rest))
+	(assert (plan (name ?name) (number (+ 1 ?num))(actions goto ?room ?zone)(duration ?*plan_time*)) )	
+)
+
+(defrule update-objective
+	?obj <- (objective ?num)
+	(final-stack ?num $?rest)
+	(goal-stack ?num $?rest)
+	=>
+	(retract ?obj)
+	(assert (objective (+ 1 ?num)))
+)
 
